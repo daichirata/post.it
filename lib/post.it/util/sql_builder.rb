@@ -9,10 +9,24 @@ module PostIt
         def initialize(table_name)
           @table_name = table_name
           @select = nil
+          @limit = nil
+        end
+
+        def [](name)
+          Query.new(@table_name, name)
+        end
+
+        def limit(num)
+          @limit ||= "LIMIT #{num}"
+          self
         end
 
         def insert(params = nil)
           Insert.new(@table_name, params)
+        end
+
+        def create(column_info)
+          Create.new(@table_name, column_info)
         end
 
         def select(target = '*')
@@ -28,16 +42,9 @@ module PostIt
           @select.where(query)
         end
 
-        def create(column_info)
-          Create.new(@table_name, column_info)
-        end
-
-        def [](name)
-          Query.new(@table_name, name)
-        end
-
         def to_sql
-          @select.to_sql
+          @select ||= Select.new(@table_name, '*')
+          [@select.to_sql, @limit].join(' ')
         end
       end
 
@@ -75,7 +82,11 @@ module PostIt
         end
 
         def to_sql
-          [@query, @where.join(' AND ')].join(' WHERE ')
+          if @where.empty?
+            @query
+          else
+           [@query, @where.join(' AND ')].join(' WHERE ')
+          end
         end
       end
 

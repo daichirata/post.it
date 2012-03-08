@@ -2,7 +2,6 @@ module PostIt
   module Model
     class Base
       class << self
-
         def storage
           PostIt.storage
         end
@@ -29,30 +28,30 @@ module PostIt
           storage.create(params)
         end
 
-        def like(params)
+        def delete(params)
           params = {
             :table_name => @table_name,
             :query => params
           }
-          storage.like(params)
+          storage.delete(params)
+        end
+
+        def find(params)
+          limit = params.delete(:limit) || 10
+          params = {
+            :table_name => @table_name,
+            :limit => limit,
+            :query => params
+          }
+          storage.find(params)
         end
 
         def first(params)
-          params = {
-            :table_name => @table_name,
-            :query => params
-          }
-          storage.first(params)
+          params = params.merge({
+            :limit => 1
+          })
+          find(params)[0]
         end
-
-        def all(params)
-          params = {
-            :table_name => @table_name,
-            :query => params
-          }
-          storage.all(params)
-        end
-
       end
     end
   end

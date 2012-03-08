@@ -5,7 +5,6 @@ module PostIt
       column :name => :string, :created_at => :datetime
 
       def self.first_or_create(params)
-        p first(params)
         unless value = first(params)
           create(params)
           value = first(params)

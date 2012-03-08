@@ -2,9 +2,10 @@ module PostIt
   class Command
     class << self
       include PostIt::Util::Color
+      include PostIt::Util::CLIFormat
 
       def run(*args)
-        command = message = tag = length = nil
+        command = message = tag = limit = nil
 
         args.each do |arg|
           case arg
@@ -13,18 +14,18 @@ module PostIt
           when /^:.+/o
             tag ||= arg
           when /^-[0-9]+$/o
-            length ||= arg
+            limit ||= arg.to_i.abs
           else
             message ||= arg
           end
         end
 
-        delegate(command, message, tag, length)
+        delegate(command, message, tag, limit)
       end
 
-      def delegate(command, message, tag, length)
+      def delegate(command, message, tag, limit)
         return help                 if command == 'help'
-        return search(tag, length)  if command == 'search' || !message
+        return search(tag, limit)  if command == 'search' || !message
         return create(message, tag) if message
 
         raise ArgumentError
@@ -36,30 +37,19 @@ module PostIt
           :tags => tags
         })
 
-        if tags
-          tags_str = with(:blue){ " Tag:"} + with(:red){"[#{Tag.parse(tags).join('][')}]" }
-        end
-
-        output do
-          with(:yellow){"Create PostIt!"} + (tags_str || '')  + " #{message}"
-        end
+        puts_create(message, tags)
       end
 
-      def search(tags, length)
-        result = Post.find_by_tag(tags, length)
+      def search(tags, limit)
+        result = Post.find_by_tag(:tags => tags, :limit => limit)
 
-        if result
-          tags_str = with(:blue){ "Tag:"} + with(:red){"[#{Tag.parse(tags).join('][')}]" }
-          result.each do |m|
-            output {tags_str + " " + m["message"]}
-          end
-        else
-          output do
-            with(:blue){"Tag:"} + with(:red){"[#{Tag.parse(tags).join('][')}]"} + with(:default){" is Not Find."}
-          end
+        case result
+        when Array
+          puts_search(result, tags)
+        when String
+          puts_tag_not_found(result)
         end
-
-        #output tag, length
+        #output tag, limit
       end
 
       def help
@@ -91,12 +81,6 @@ module PostIt
           all other documentation is located at:
             https://github.com/holman/boom
         EOH
-      end
-
-      def output
-        unless PostIt.silent
-          STDOUT.puts yield
-        end
       end
     end
   end

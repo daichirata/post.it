@@ -7,47 +7,37 @@ module PostIt
         preparation
       end
 
-      def like(params)
-        table = Table[params[:table_name]]
-        params[:query].each do |k, vals|
-          vals.each do |v|
-            table.where table[k].like(v)
-          end
-        end
-        execute(table.to_sql)
-      end
-
-      def all(params)
-        table = Table[params[:table_name]]
-        params[:query].each do |k, v|
-          table.where(table[k].eq(v))
-        end
-        execute(table.to_sql)
-      end
-
-      def first(params)
-        table = Table[params[:table_name]]
-        params[:query].each do |k, v|
-          table.where(table[k].eq(v))
-        end
-        execute_first(table.to_sql)
-      end
-
       def create(params)
         table = Table[params[:table_name]]
         execute(table.insert(params[:query]).to_sql)
       end
 
-      def execute(sql, place_holder = nil)
-        debug(sql){@connection.execute(sql, place_holder)}
+      def delete()
       end
 
-      def execute_first(sql, place_holder = nil)
-        debug(sql){@connection.get_first_row(sql, place_holder)}
+      def find(params)
+        table = Table[params[:table_name]].limit(params[:limit])
+        params[:query].each do |k, vals|
+          case vals
+          when String
+            table.where(table[k].eq(vals))
+          when Array
+            vals.each do |v|
+              table.where(table[k].like(v))
+            end
+          end
+        end
+        execute(table.to_sql)
+      end
+
+      def execute(sql)
+        debug(sql) { @connection.execute(sql) }
       end
 
       def debug(value)
-        STDOUT.puts(value + "\n\n") if PostIt.debug
+        if PostIt.debug
+          STDOUT.puts(value + "\n\n")
+        end
         yield
       end
 

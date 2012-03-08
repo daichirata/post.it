@@ -18,17 +18,22 @@ module PostIt
         super(params)
       end
 
-      def self.find_by_tag(tags, length)
-        values = Tag.parse(tags).map do |tag|
-          if it = Tag.first(:name => tag)
-            %.%"#{it['id']}"%.
-          end
-        end.compact
+      def self.find_by_tag(params)
+        if params[:tags]
+          values = Tag.parse(params[:tags]).map do |tag|
+            if it = Tag.first(:name => tag)
+              %[%"#{it['id']}"%]
+            else
+              return tag
+            end
+          end.compact
 
-        unless values.empty?
-          like({:tag_ids => values})
+          find(:tag_ids => values, :limit => params[:limit])
+        else
+          find(:limit => params[:limit])
         end
       end
+
     end
   end
 

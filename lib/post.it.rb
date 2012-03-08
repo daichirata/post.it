@@ -8,8 +8,9 @@ require 'post.it/model'
 require 'post.it/model/base'
 require 'post.it/model/post'
 require 'post.it/model/tag'
-require 'post.it/util/sql_builder'
 require 'post.it/util/color'
+require 'post.it/util/cli_format'
+require 'post.it/util/sql_builder'
 require 'post.it/config'
 require 'post.it/command'
 
@@ -18,11 +19,13 @@ module PostIt
 
   class << self
     def config
-      @config ||= PostIt::Config.new
+      @config ||=
+        PostIt::Config.new
     end
 
     def storage
-      @storage ||= PostIt::Storage.resolve(config['storage'])
+      @storage ||=
+        PostIt::Storage.resolve config['storage']
     end
 
     def debug
