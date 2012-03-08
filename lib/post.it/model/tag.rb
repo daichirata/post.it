@@ -12,9 +12,21 @@ module PostIt
         value
       end
 
+      def self.find_by_ids(params)
+        tags = eval(params[:ids]).map do |id|
+          first({:id => id})['name']
+        end
+
+        unparse(tags)
+      end
+
       def self.parse(tags)
         s = tags.split(':')
         s.size > 1 ? s[1..-1] : s
+      end
+
+      def self.unparse(tags)
+        tags.empty? ? nil : ":#{tags.join(':')}"
       end
     end
   end

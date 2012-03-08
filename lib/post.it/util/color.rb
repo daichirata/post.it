@@ -7,7 +7,11 @@ module PostIt
           :bg_black => 40, :bg_red  => 41, :bg_green => 42, :bg_default => 49 }
 
       def with(name, &block)
-        "\e[#{COLORS[name.to_sym]}m" + yield + "\e[0m"
+        if PostIt.color == true
+          "\e[#{COLORS[name.to_sym]}m" + yield + "\e[0m"
+        else
+          yield
+        end
       end
     end
   end

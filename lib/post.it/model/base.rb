@@ -37,7 +37,7 @@ module PostIt
         end
 
         def find(params)
-          limit = params.delete(:limit) || 10
+          limit = params.delete(:limit) || PostIt.default_limit
           params = {
             :table_name => @table_name,
             :limit => limit,

@@ -28,8 +28,16 @@ module PostIt
         PostIt::Storage.resolve config['storage']
     end
 
-    def debug
+    def default_limit
+      15
+    end
+
+    def color
       true
+    end
+
+    def debug
+#      true
     end
 
     def silent

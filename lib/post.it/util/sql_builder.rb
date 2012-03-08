@@ -29,12 +29,22 @@ module PostIt
           Create.new(@table_name, column_info)
         end
 
+        def delete
+          @delete ||= Delete.new(@table_name)
+
+          if block_given?
+            yield @delete
+          end
+          @delete
+        end
+
         def select(target = '*')
           @select ||= Select.new(@table_name, target)
 
           if block_given?
             yield @select
           end
+          @select
         end
 
         def where(query)
@@ -140,6 +150,13 @@ module PostIt
 
         def to_sql
           [@query, build].join(' ')
+        end
+      end
+
+      class Delete < Select
+        def initialize(table_name)
+          @query = "DELETE FROM #{table_name}"
+          @where = []
         end
       end
     end

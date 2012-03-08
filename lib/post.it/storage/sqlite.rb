@@ -12,17 +12,25 @@ module PostIt
         execute(table.insert(params[:query]).to_sql)
       end
 
-      def delete()
+      def delete(params)
+        table = Table[params[:table_name]]
+        table.delete do |t|
+          params[:query].each do |k, v|
+            t.where(table[k].eq(v))
+          end
+        end.to_sql
+
+        execute(table.delete.to_sql)
       end
 
       def find(params)
         table = Table[params[:table_name]].limit(params[:limit])
-        params[:query].each do |k, vals|
-          case vals
-          when String
-            table.where(table[k].eq(vals))
+        params[:query].each do |k, val|
+          case val
+          when String, Integer
+            table.where(table[k].eq(val))
           when Array
-            vals.each do |v|
+            val.each do |v|
               table.where(table[k].like(v))
             end
           end
@@ -35,12 +43,11 @@ module PostIt
       end
 
       def debug(value)
-        if PostIt.debug
-          STDOUT.puts(value + "\n\n")
-        end
+        STDOUT.puts(value + "\n\n") if PostIt.debug
         yield
       end
 
+      private
       def preparation
         PostIt::Model.list.each do |model|
           table_name, column = PostIt::Model.const_get(model).scheme

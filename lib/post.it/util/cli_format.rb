@@ -1,35 +1,81 @@
 module PostIt
   module Util
     module CLIFormat
-
-      def puts_create(message, tags)
+      def output_create(message, tags)
         tags_str = adjust_tags(tags) if tags
 
         output do
-          with(:yellow){"Create PostIt! "} + (tags_str || '')  + "#{message}"
+          with(:yellow){"Create PostIt! "} + "#{message} " + (tags_str || '')
         end
       end
 
-      def puts_search(result, tags)
-        tags_str = tags ? adjust_tags(tags) : ''
+      def output_delete(id)
+        output do
+          with(:red){ "ID#{id} was deleted!" }
+        end
+      end
+
+      def output_search(result)
         result.each do |m|
-          output {tags_str + m["message"]}
+          tags = Tag.find_by_ids(:ids => m['tag_ids'])
+          tags_str = adjust_tags(tags)
+
+          output do
+            <<-EOP.gsub(/^ {10}/, '')
+            #{adjust_id(m['id'])} #{adjust_time(m['created_at'])} #{tags_str}
+              #{m["message"]}
+
+            EOP
+          end
         end
       end
 
-      def puts_tag_notfound(tag)
+      def output_help
+        output do
+          <<-EOH.gsub(/^ {10}/, '')
+          post.it: help ---------------------------------------------------
+
+            post.it
+            post.it <message>
+            post.it <message> <:tag>
+            post.it <message> <:tag> <:limit>
+            post.it help
+            post.it storage
+            post.it switch <storage>
+          EOH
+        end
+      end
+
+      def output_not_found(tag)
         output do
           with(:blue){ "Tag:"} + with(:red){"[#{tag}]"} + ' is Not Found.'
         end
       end
 
+      def adjust_id(id)
+        with(:yellow){ "ID:#{id}" }
+      end
+
+
       def adjust_tags(tags)
-        with(:blue){ "Tag:"} + with(:red){"[#{Tag.parse(tags).join('][')}] " }
+        if tags
+          with(:blue){ "Tag:"} + with(:red){"[#{Tag.parse(tags).join('][')}]" }
+        else
+          with(:blue){ "Tag:[none]" }
+        end
+      end
+
+      def adjust_time(created_at)
+        with(:cyan){ Time.parse(created_at).strftime('%Y/%m/%d') }
+      end
+
+      def out
+        STDOUT
       end
 
       def output
         unless PostIt.silent
-          STDOUT.puts '> ' + yield
+          out.puts(yield)
         end
       end
     end
