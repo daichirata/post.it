@@ -22,24 +22,34 @@ module PostIt
         end
 
         def create(params)
-          params = params.merge({
+          params = {
             :table_name => @table_name,
-            :created_at => Time.now
-          })
+            :query => params.merge({:created_at => Time.now})
+          }
           storage.create(params)
         end
 
-        def find(params)
-          params = params.merge({
+        def like(params)
+          params = {
             :table_name => @table_name,
-          })
+            :query => params
+          }
+          storage.like(params)
+        end
+
+        def first(params)
+          params = {
+            :table_name => @table_name,
+            :query => params
+          }
           storage.first(params)
         end
 
-        def find_all(params)
-          params = params.merge({
+        def all(params)
+          params = {
             :table_name => @table_name,
-          })
+            :query => params
+          }
           storage.all(params)
         end
 

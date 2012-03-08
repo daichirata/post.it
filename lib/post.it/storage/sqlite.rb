@@ -7,25 +7,35 @@ module PostIt
         preparation
       end
 
+      def like(params)
+        table = Table[params[:table_name]]
+        params[:query].each do |k, vals|
+          vals.each do |v|
+            table.where table[k].like(v)
+          end
+        end
+        execute(table.to_sql)
+      end
+
       def all(params)
-        table = Table[params.delete(:table_name)]
-        params.each do |k, v|
+        table = Table[params[:table_name]]
+        params[:query].each do |k, v|
           table.where(table[k].eq(v))
         end
         execute(table.to_sql)
       end
 
       def first(params)
-        table = Table[params.delete(:table_name)]
-        params.each do |k, v|
+        table = Table[params[:table_name]]
+        params[:query].each do |k, v|
           table.where(table[k].eq(v))
         end
         execute_first(table.to_sql)
       end
 
       def create(params)
-        table = Table[params.delete(:table_name)]
-        execute(table.insert(params).to_sql)
+        table = Table[params[:table_name]]
+        execute(table.insert(params[:query]).to_sql)
       end
 
       def execute(sql, place_holder = nil)
@@ -55,7 +65,7 @@ module PostIt
           t.where table[:name].not_eq('sqlite_sequence')
           t.where table[:name].eq(table_name)
         end
-        execute(table.to_sql)
+        execute(table.to_sql).any?
       end
 
       def create_table(table_name, column_info)

@@ -4,10 +4,11 @@ module PostIt
       table_name :tags
       column :name => :string, :created_at => :datetime
 
-      def self.find_or_create(params)
-        unless value = find(params)
+      def self.first_or_create(params)
+        p first(params)
+        unless value = first(params)
           create(params)
-          value = find(params)
+          value = first(params)
         end
         value
       end

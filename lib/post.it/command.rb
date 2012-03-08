@@ -37,7 +37,7 @@ module PostIt
         })
 
         if tags
-          tags_str = with(:blue){ " Tag:[#{Tag.parse(tags).join('][')}]" }
+          tags_str = with(:blue){ " Tag:"} + with(:red){"[#{Tag.parse(tags).join('][')}]" }
         end
 
         output do
@@ -46,7 +46,19 @@ module PostIt
       end
 
       def search(tags, length)
-        p Post.find_by_tag(tags, length)
+        result = Post.find_by_tag(tags, length)
+
+        if result
+          tags_str = with(:blue){ "Tag:"} + with(:red){"[#{Tag.parse(tags).join('][')}]" }
+          result.each do |m|
+            output {tags_str + " " + m["message"]}
+          end
+        else
+          output do
+            with(:blue){"Tag:"} + with(:red){"[#{Tag.parse(tags).join('][')}]"} + with(:default){" is Not Find."}
+          end
+        end
+
         #output tag, length
       end
 

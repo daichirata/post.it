@@ -10,7 +10,7 @@ module PostIt
 
         if tags
           Tag.parse(tags).each do |tag|
-            params[:tag_ids] << "#{Tag.find_or_create(:name => tag)['id']}"
+            params[:tag_ids] << "#{Tag.first_or_create(:name => tag)['id']}"
           end
           params[:tag_ids].sort!.uniq!
         end
@@ -19,11 +19,15 @@ module PostIt
       end
 
       def self.find_by_tag(tags, length)
-        where = Tag.parse(tags).map do |tag|
-          if it = Tag.find(:name => tag)
-            %{tag_ids LILE '%"#{it['id']}"%'}
+        values = Tag.parse(tags).map do |tag|
+          if it = Tag.first(:name => tag)
+            %.%"#{it['id']}"%.
           end
         end.compact
+
+        unless values.empty?
+          like({:tag_ids => values})
+        end
       end
     end
   end
