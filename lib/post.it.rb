@@ -1,11 +1,22 @@
 $:.push File.expand_path(File.dirname(__FILE__))
 
+require 'sqlite3'
+require 'multi_json'
+require 'post.it/storage'
+require 'post.it/storage/sqlite'
+require 'post.it/model'
+require 'post.it/model/base'
+require 'post.it/model/post'
+require 'post.it/model/tag'
+require 'post.it/util/sql_builder'
+require 'post.it/util/color'
+require 'post.it/config'
+require 'post.it/command'
+
 module PostIt
   VERSION = '0.0.1'
 
   class << self
-    attr_accessor :models
-
     def config
       @config ||= PostIt::Config.new
     end
@@ -15,7 +26,7 @@ module PostIt
     end
 
     def debug
-      false
+      true
     end
 
     def silent
@@ -24,17 +35,6 @@ module PostIt
   end
 end
 
-require 'arel'
-require 'sqlite3'
-require 'multi_json'
-require 'post.it/storage'
-require 'post.it/storage/base'
-require 'post.it/storage/sqlite'
-require 'post.it/config'
-require 'post.it/color'
-require 'post.it/command'
-require 'post.it/post'
-require 'post.it/tag'
 
 # for debugg
 # p PostIt.storage

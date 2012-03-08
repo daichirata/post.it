@@ -1,5 +1,5 @@
 module PostIt
-  module Storage
+  module Model
     class Base
       class << self
 
@@ -9,8 +9,8 @@ module PostIt
 
         def table_name(name)
           @table_name = name.to_s
-          PostIt.models ||= []
-          PostIt.models << self.name.sub('PostIt::', '')
+          Model.list ||= []
+          Model.list << self.name.sub('PostIt::Model::', '')
         end
 
         def column(column = {})
@@ -33,15 +33,16 @@ module PostIt
           params = params.merge({
             :table_name => @table_name,
           })
-          storage.find_first(params)
+          storage.first(params)
         end
 
         def find_all(params)
           params = params.merge({
             :table_name => @table_name,
           })
-          storage.find_all(params)
+          storage.all(params)
         end
+
       end
     end
   end

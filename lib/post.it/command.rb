@@ -1,8 +1,7 @@
 module PostIt
   class Command
-    extend Color
-
     class << self
+      include PostIt::Util::Color
 
       def run(*args)
         command = message = tag = length = nil
