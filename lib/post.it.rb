@@ -18,6 +18,8 @@ module PostIt
   VERSION = '0.0.1'
 
   class << self
+    attr_accessor :color, :debug, :silent
+
     def config
       @config ||=
         PostIt::Config.new
@@ -31,22 +33,10 @@ module PostIt
     def default_limit
       15
     end
-
-    def color
-      true
-    end
-
-    def debug
-#      true
-    end
-
-    def silent
-      false
-    end
   end
+
+  self.color = true
+  self.debug = true
+  self.silent = false
 end
-
-
-# for debugg
-# p PostIt.storage
 
