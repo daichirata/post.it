@@ -2,6 +2,7 @@ $:.push File.expand_path(File.dirname(__FILE__))
 
 require 'sqlite3'
 require 'multi_json'
+
 require 'post.it/storage'
 require 'post.it/storage/sqlite'
 require 'post.it/model'
@@ -31,7 +32,7 @@ module PostIt
     end
 
     def default_limit
-      15
+      config['default_limit']
     end
   end
 

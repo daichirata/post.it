@@ -2,6 +2,20 @@ module PostIt
   class Config
     attr_reader :attributes
 
+    def initialize
+      bootstrap unless File.exist?(conf_file)
+      load_attributes
+    end
+
+    def [](key)
+      @attributes[key.to_s]
+    end
+
+    def attributes=(attrs)
+      @attributes = attrs
+      save
+    end
+
     def conf_file
       "#{ENV['HOME']}/.postit.conf"
     end
@@ -10,21 +24,12 @@ module PostIt
       "#{ENV['HOME']}/.postit.db"
     end
 
-    def initialize
-      bootstrap unless File.exist?(conf_file)
-      load_attributes
-    end
-
     def bootstrap
       @attributes = {
-        :storage => 'sqlite',
-        :sqlite_file => sqlite_file
+        :storage       => 'sqlite',
+        :sqlite_file   => sqlite_file,
+        :default_limit => 15
       }
-      save
-    end
-
-    def attributes=(attrs)
-      @attributes = attrs
       save
     end
 
@@ -35,10 +40,6 @@ module PostIt
     def save
       json = MultiJson.encode(attributes)
       File.open(conf_file, 'w') {|f| f.write(json) }
-    end
-
-    def [](key)
-      @attributes[key.to_s]
     end
   end
 end
