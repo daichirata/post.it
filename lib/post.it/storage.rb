@@ -7,10 +7,7 @@ module PostIt
           Storage.const_get("SQLite").new
 
         # TODO
-        #   TextFile(json), MySQL, MongoDB
-        when "json"
-        when "mysql"
-        when "mongo"
+        #   json, mysql, (redis, mongo)
         end
       end
     end

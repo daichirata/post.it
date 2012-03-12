@@ -21,9 +21,11 @@ module PostIt
           tags_str = adjust_tags(tags)
 
           output do
-            <<-EOP.gsub(/^ {10}/, '')
-            #{adjust_id(m['id'])} #{adjust_time(m['created_at'])} #{tags_str}
-              #{m["message"]}
+            <<-EOP.gsub(/^ {14}/, '')
+              #{adjust_id(m['id'])} #{tags_str}
+              Date:#{m['created_at']}
+
+                #{m["message"]}
 
             EOP
           end
@@ -53,7 +55,7 @@ module PostIt
       end
 
       def adjust_id(id)
-        with(:yellow){ "ID:#{id}" }
+        with(:yellow){ "ID:#{format("%04d",id)}" }
       end
 
 

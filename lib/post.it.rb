@@ -37,7 +37,7 @@ module PostIt
   end
 
   self.color = true
-  self.debug = true
+  self.debug = false
   self.silent = false
 end
 
