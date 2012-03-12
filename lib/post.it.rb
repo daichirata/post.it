@@ -1,43 +1,28 @@
 $:.push File.expand_path(File.dirname(__FILE__))
 
-require 'sqlite3'
-require 'multi_json'
+require 'sequel'
+require 'logger'
 
-require 'post.it/storage'
-require 'post.it/storage/sqlite'
 require 'post.it/model'
-require 'post.it/model/base'
 require 'post.it/model/post'
 require 'post.it/model/tag'
-require 'post.it/util/color'
-require 'post.it/util/cli_format'
-require 'post.it/util/sql_builder'
-require 'post.it/config'
-require 'post.it/command'
+require 'post.it/model/tagging'
+require 'post.it/cli'
+require 'post.it/cli/color'
+require 'post.it/cli/format'
+require 'post.it/cli/command'
 
 module PostIt
-  VERSION = '0.0.1'
+  VERSION = '0.0.2'
 
   class << self
     attr_accessor :color, :debug, :silent
-
-    def config
-      @config ||=
-        PostIt::Config.new
-    end
-
-    def storage
-      @storage ||=
-        PostIt::Storage.resolve config['storage']
-    end
-
-    def default_limit
-      config['default_limit']
-    end
   end
 
-  self.color = true
-  self.debug = false
-  self.silent = false
+  module Model
+    # DB.loggers << Logger.new(STDOUT)
+  end
 end
+
+
 

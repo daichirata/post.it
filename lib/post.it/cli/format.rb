@@ -1,6 +1,6 @@
 module PostIt
-  module Util
-    module CLIFormat
+  module CLI
+    module Format
       def output_create(message, tags)
         tags_str = adjust_tags(tags) if tags
 

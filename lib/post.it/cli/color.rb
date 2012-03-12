@@ -1,5 +1,5 @@
 module PostIt
-  module Util
+  module CLI
     module Color
       COLORS =
         { :r_video  => 7,  :black   => 30, :red      => 31, :green      => 32, :yellow  => 33,
