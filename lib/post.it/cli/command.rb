@@ -1,10 +1,9 @@
 module PostIt
   module CLI
     class Command
-      class << self
-        include PostIt::CLI::Color
-        include PostIt::CLI::Format
+      extend PostIt::CLI::Format
 
+      class << self
         def delegate(command, message, tags, limit)
           return help                  if command == 'help'
           return delete(message)       if command == 'delete'
@@ -16,24 +15,28 @@ module PostIt
 
         def create(message, tags)
           post = Model::Post.create(:body => message)
-          tags.each do |tag|
-            t = Model::Tag.find_or_create(:name => tag)
-            post.add_tag(t)
+          if tags
+            tags.each do |tag|
+              t = Model::Tag.find_or_create(:name => tag)
+              post.add_tag(t)
+            end
           end
 
-          p post
-          p post.tags
+          output_create(post)
         end
 
         def search(tags, limit)
+          tags = tags.map {|tag| Tag.find(:name => tag)}
+          posts = Model::Post.filter(:tags => tags).limit(limit || 15).all
+
+          output_search(posts)
         end
 
         def delete(id)
-          Model::Post[id].delete
         end
 
         def help
-          output_help
+          format_help
         end
       end
     end
