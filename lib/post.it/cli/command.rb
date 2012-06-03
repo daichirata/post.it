@@ -1,8 +1,6 @@
 module PostIt
   module CLI
     class Command
-      extend PostIt::CLI::Format
-
       class << self
         def delegate(command, message, tags, limit)
           return help                  if command == 'help'
@@ -22,21 +20,23 @@ module PostIt
             end
           end
 
-          output_create(post)
+          CLI::Output.create(post)
         end
 
         def search(tags, limit)
-          tags = tags.map {|tag| Tag.find(:name => tag)}
-          posts = Model::Post.filter(:tags => tags).limit(limit || 15).all
-
-          output_search(posts)
+          posts = Model::Post
+          if tags
+            tags = tags.map {|tag| Tag.find(:name => tag)}
+            posts.filter(:tags => tags)
+          end
+          CLI::Output.search posts.limit(limit || 15).all
         end
 
         def delete(id)
         end
 
         def help
-          format_help
+          CLI::Output.help
         end
       end
     end

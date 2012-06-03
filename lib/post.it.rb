@@ -8,8 +8,8 @@ require 'post.it/model/post'
 require 'post.it/model/tag'
 require 'post.it/model/tagging'
 require 'post.it/cli'
-require 'post.it/cli/terminal'
-require 'post.it/cli/format'
+require 'post.it/cli/color'
+require 'post.it/cli/output'
 require 'post.it/cli/command'
 
 module PostIt
