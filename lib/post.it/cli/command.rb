@@ -4,7 +4,7 @@ module PostIt
       class << self
         def delegate(command, message, tags, limit)
           return help                  if command == 'help'
-          return delete(message)       if command == 'delete'
+          return delete(message, tags) if command == 'delete'
           return search(tags, limit)   if command == 'search' || !message
           return create(message, tags) if message
 
@@ -24,15 +24,21 @@ module PostIt
         end
 
         def search(tags, limit)
-          posts = Model::Post
+          posts = Model::Post.order(:created_at.desc)
           if tags
-            tags = tags.map {|tag| Tag.find(:name => tag)}
-            posts.filter(:tags => tags)
+            tags.map!{|tag| Model::Tag.find(:name => tag)}
+            posts.filter!(:tags => tags)
           end
-          CLI::Output.search posts.limit(limit || 15).all
+          CLI::Output.search posts.limit(limit || 10).all.reverse
         end
 
-        def delete(id)
+        def delete(id, tags)
+          post = Model::Post.filter(:id => id).first
+          if CLI::Output.confirm_delete? post
+            post.remove_all_tags
+            post.destroy
+          end
+          CLI::Output.delete post
         end
 
         def help

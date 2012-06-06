@@ -20,7 +20,7 @@ module PostIt
   end
 
   module Model
-    # DB.loggers << Logger.new(STDOUT)
+    DB.loggers << Logger.new(STDOUT)
   end
 end
 
