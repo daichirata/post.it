@@ -8,6 +8,14 @@ module PostIt
           puts with(:yellow){"Create!"} + format_tags(post.tags) + post.body
         end
 
+        def post_not_found(id)
+          puts "ID:#{id} is not found"
+        end
+
+        def tag_not_found(tag)
+          puts "Tag:[#{tag}] is not found"
+        end
+
         def search(posts)
           posts.each do |post|
             puts <<-EOP.gsub(/^ {16}/, '')
@@ -61,7 +69,6 @@ module PostIt
         def format_time(time)
            'Date:' + time.strftime('%Y/%m/%d %H:%M')
         end
-
       end# end class << self
     end# end Output
   end

@@ -19,14 +19,20 @@ module PostIt
               post.add_tag(t)
             end
           end
-
           CLI::Output.create(post)
         end
 
         def search(tags, limit)
           posts = Model::Post.order(:created_at.desc)
           if tags
-            tags.map!{|tag| Model::Tag.find(:name => tag)}
+            tags = tags.each_with_object([]) do |tag_name, tag|
+              _tag = Model::Tag.find(:name => tag_name)
+              unless _tag
+                CLI::Output.tag_not_found(tag_name)
+                exit 0
+              end
+              tag << _tag
+            end
             posts.filter!(:tags => tags)
           end
           CLI::Output.search posts.limit(limit || 10).all.reverse
@@ -34,11 +40,13 @@ module PostIt
 
         def delete(id, tags)
           post = Model::Post.filter(:id => id).first
-          if CLI::Output.confirm_delete? post
+          if post && CLI::Output.confirm_delete?(post)
             post.remove_all_tags
             post.destroy
+            CLI::Output.delete post
+          else
+            CLI::Output.post_not_found(id)
           end
-          CLI::Output.delete post
         end
 
         def help
