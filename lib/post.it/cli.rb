@@ -6,7 +6,7 @@ module PostIt
 
         args.each do |arg|
           case arg
-          when 'search', 'delete', 'help'
+          when 'search', 'delete', 'help', 'run'
             command ||= arg
           when /^:.+/o
             tags ||= arg.split(':')[1..-1]

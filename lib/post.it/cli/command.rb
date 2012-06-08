@@ -4,6 +4,7 @@ module PostIt
       class << self
         def delegate(command, message, tags, limit)
           return help                  if command == 'help'
+          return run(message)          if command == 'run'
           return delete(message, tags) if command == 'delete'
           return search(tags, limit)   if command == 'search' || !message
           return create(message, tags) if message
@@ -47,6 +48,13 @@ module PostIt
           else
             CLI::Output.post_not_found(id)
           end
+        end
+
+        def run(message)
+          # TODO
+          # background or deamon
+          command = "ruby #{PostIt.root}/post.it/app.rb"
+          system command
         end
 
         def help

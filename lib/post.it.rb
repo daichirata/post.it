@@ -16,7 +16,11 @@ module PostIt
   VERSION = '0.0.2'
 
   class << self
-    attr_accessor :color, :debug, :silent
+    attr_accessor :root, :color, :debug, :silent
+
+    def root
+      @root ||= File.expand_path(File.dirname(__FILE__))
+    end
   end
 
   module Model

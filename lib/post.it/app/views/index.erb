@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>Post.It!</title>
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+        <link href='http://fonts.googleapis.com/css?family=Orbitron:400' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/css/normalize.css" >
+        <link rel="stylesheet" href="/css/application.css" >
+        <!-- <script src="/js/application.js"></script> -->
+        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+        <!--[if lt IE 9]>
+          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div id="container">
+            <% @posts.each do |day, posts| %>
+            <section class="content rounded-right box-shadow">
+                <div class="post-it">
+                    <% month, date =  day.split('/') %>
+                    <div class="date">
+                        <span class="month"><%= month %></span>
+                        <span class="day"><%= date %></span>
+                    </div>
+                    <% posts.each do |post| %>
+                        <p>
+                          <%= post.created_at.strftime('%H:%M:%S') %>
+                          <%= post.body %>
+                          <%= tag_link_to(post) %>
+                        </p>
+                    <% end %>
+                    <br />
+                </div>
+            </section>
+            <% end %>
+        </div>
+        <footer>
+          <p class="logo">Post It!</p>
+        </footer>
+    </body>
+</html>
+
